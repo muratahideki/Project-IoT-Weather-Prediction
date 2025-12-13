@@ -1,9 +1,27 @@
 # tasks.py
 from datetime import datetime, timedelta
 import sqlite3
+import requests
 import math
 
-# Importe as constantes ou configurações necessárias
+# --- CONFIGURAÇÃO DA API EXTERNA (VENTO) ---
+API_KEY = "SUA_CHAVE_AQUI"  # <--- COLOQUE SUA CHAVE AQUI
+LAT = "-22.73"  
+LON = "-45.12"
+URL_API = f"https://api.openweathermap.org/data/2.5/weather?lat={LAT}&lon={LON}&appid={API_KEY}&units=metric"
+
+# --------- Funções Auxiliares ---------
+
+def obter_vento_externo():
+    """ Vai na internet e pega o vento atual """
+    try:
+        response = requests.get(URL_API)
+        dados = response.json()
+        velocidade_vento = dados['wind']['speed'] 
+        nome_cidade = dados['name']
+        return velocidade_vento, nome_cidade
+    except:
+        return 0.0, "Erro API"
 
 def calcular_probabilidade_chuva(temp, umid, pressao, vento):
     # --- NOVOS PESOS (Atualizado) ---
