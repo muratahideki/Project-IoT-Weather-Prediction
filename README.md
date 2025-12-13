@@ -4,15 +4,15 @@ Este projeto consiste em uma estação meteorológica completa que coleta dados 
 
 O sistema possui um dashboard web para visualização de dados instantâneos e históricos, além de um "robô" (Scheduler) que processa médias horárias automaticamente.
 
-## 📸 Funcionalidades
+## Funcionalidades
 
-- **📡 Coleta de Dados IoT:** Recebe Temperatura, Umidade, Pressão e Altitude de um microcontrolador ESP32.
+- ** Coleta de Dados IoT:** Recebe Temperatura, Umidade, Pressão e Altitude de um microcontrolador ESP32.
 - **cloud Integração via API:** Consulta a velocidade do vento em tempo real via OpenWeatherMap para complementar os dados locais.
-- **🤖 IA / Previsão:** Algoritmo de Regressão Logística implementado "from scratch" para calcular a % de chance de chuva baseada em pesos pré-treinados.
-- **📊 Dashboard Interativo:** Gráficos em tempo real (Chart.js) e exibição de cartões de alerta.
-- **🗄️ Histórico e Automação:** Banco de dados SQLite para armazenar leituras e um Job agendado (APScheduler) que calcula e arquiva médias horárias.
+- ** IA / Previsão:** Algoritmo de Regressão Logística implementado "from scratch" para calcular a % de chance de chuva baseada em pesos pré-treinados.
+- ** Dashboard Interativo:** Gráficos em tempo real (Chart.js) e exibição de cartões de alerta.
+- ** Histórico e Automação:** Banco de dados SQLite para armazenar leituras e um Job agendado (APScheduler) que calcula e arquiva médias horárias.
 
-## 🛠️ Arquitetura do Projeto
+## Arquitetura do Projeto
 
 O projeto segue uma arquitetura cliente-servidor:
 
@@ -24,7 +24,7 @@ O projeto segue uma arquitetura cliente-servidor:
 3.  **Frontend (HTML/JS):** Consome a API do servidor para plotar gráficos e exibir a previsão.
 4.  **Background Task:** A cada hora, um script calcula a média dos dados e salva na tabela de resumos.
 
-## 🚀 Como Executar
+##  Como Executar
 
 ### Pré-requisitos
 * Python 3.8+
