@@ -34,8 +34,8 @@ O projeto segue uma arquitetura cliente-servidor:
 
 1.  Clone o repositório:
     ```bash
-    git clone [https://github.com/seu-usuario/estacao-meteorologica-ia.git](https://github.com/seu-usuario/estacao-meteorologica-ia.git)
-    cd estacao-meteorologica-ia
+    git clone https://github.com/muratahideki/Project-IoT-Weather-Prediction/tree/main
+    cd projeto-clima
     ```
 
 2.  Crie um ambiente virtual e instale as dependências:
