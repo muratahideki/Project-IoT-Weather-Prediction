@@ -59,7 +59,7 @@ O projeto segue uma arquitetura cliente-servidor:
     ```
     O servidor iniciará em `http://0.0.0.0:5000`.
 
-## 📡 API Endpoints (Para o ESP32)
+##  API Endpoints (Para o ESP32)
 
 O ESP32 deve enviar uma requisição **HTTP POST** para o endpoint `/dados` com o seguinte formato JSON:
 
