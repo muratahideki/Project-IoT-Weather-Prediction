@@ -1,6 +1,10 @@
 from flask import Flask, request, jsonify, render_template
 from apscheduler.schedulers.background import BackgroundScheduler
+import sqlite3
 import database  # Importa seu módulo
+from database import DB_NAME
+from datetime import datetime, timedelta
+from tasks import obter_vento_externo, calcular_probabilidade_chuva
 import tasks     # Importa seu módulo
 
 app = Flask(__name__)
@@ -10,7 +14,7 @@ database.inicializar_db()
 
 # Inicia Scheduler
 scheduler = BackgroundScheduler()
-scheduler.add_job(tasks.job_calcular_media, trigger="cron", minute=0)
+scheduler.add_job(tasks.calcular_media_hora_anterior, trigger="cron", minute=0)
 scheduler.start()
 
 # --------- Rotas do Servidor ---------
@@ -101,15 +105,18 @@ def dashboard():
             cor_texto = "#006600"
             msg_previsao = "Baixa Probabilidade"
 
-    
-    return render_template_string(html, 
-                                  resumos=resumos, 
-                                  prob_chuva=prob_chuva, 
-                                  msg_previsao=msg_previsao,
-                                  cor_card=cor_card,
-                                  cor_texto=cor_texto,
-                                  inputs_usados=inputs_usados,
-                                  cidade=cidade_api)
+    return render_template(
+        "dashboard.html",
+        resumos=resumos,
+        prob_chuva=prob_chuva,
+        msg_previsao=msg_previsao,
+        cor_card=cor_card,
+        cor_texto=cor_texto,
+        inputs_usados=inputs_usados,
+        cidade=cidade_api
+    )
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, use_reloader=False)

@@ -36,9 +36,6 @@ def inicializar_db():
         )
     """)
     conn.commit()
-    conn.close(
+    conn.close()
     
 inicializar_db()
-
-def inserir_medida(temp, press, alt, umid, vento):
-    # ... código de insert ...

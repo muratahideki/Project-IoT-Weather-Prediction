@@ -1,116 +1,116 @@
-html = """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Estação Meteorológica & IA</title>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <meta http-equiv="refresh" content="60">
-        <style>
-            body { font-family: 'Segoe UI', sans-serif; padding: 20px; background: #f0f2f5; }
-            .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-            .card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-            .full-width { grid-column: span 2; }
-            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-            th, td { border-bottom: 1px solid #ddd; padding: 12px; text-align: center; }
-            th { background-color: #007BFF; color: white; border-radius: 4px 4px 0 0; }
-            .ia-card { text-align: center; border: 2px solid; }
-            .porcentagem { font-size: 4em; font-weight: bold; margin: 10px 0; }
-        </style>
-    </head>
-    <body>
-        <h1>⛅ Estação Meteorológica Inteligente</h1>
-        
-        <div class="grid">
-            <div class="card ia-card" style="background-color: {{ cor_card }}; border-color: {{ cor_texto }}; color: {{ cor_texto }}">
-                <h3>🤖 IA: Chance de Chuva</h3>
-                <div class="porcentagem">{{ "%.1f"|format(prob_chuva) }}%</div>
-                <div style="font-weight: bold; font-size: 1.2em;">{{ msg_previsao }}</div>
-                <br>
-                <small>
-                    <strong>Médias Usadas (60min):</strong><br>
-                    Temp: {{ "%.1f"|format(inputs_usados[0]) }}°C | 
-                    Umid: {{ "%.1f"|format(inputs_usados[1]) }}% <br> 
-                    Press: {{ "%.1f"|format(inputs_usados[2]) }} hPa |
-                    Vento: {{ "%.1f"|format(inputs_usados[3]) }} m/s
-                </small>
-            </div>
 
-            <div class="card" style="background: #e3f2fd; border-left: 5px solid #2196F3;">
-                <h3>🌬️ Vento em {{ cidade }}</h3>
-                <p>Média dos últimos 60min:</p>
-                <div style="font-size: 3em; font-weight: bold; color: #1565C0;">
-                    {{ "%.1f"|format(inputs_usados[3]) }} m/s
-                </div>
-                <small>Fonte: OpenWeatherMap (Integrado)</small>
-            </div>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Estação Meteorológica & IA</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta http-equiv="refresh" content="60">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; padding: 20px; background: #f0f2f5; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .full-width { grid-column: span 2; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border-bottom: 1px solid #ddd; padding: 12px; text-align: center; }
+        th { background-color: #007BFF; color: white; border-radius: 4px 4px 0 0; }
+        .ia-card { text-align: center; border: 2px solid; }
+        .porcentagem { font-size: 4em; font-weight: bold; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>⛅ Estação Meteorológica Inteligente</h1>
+    
+    <div class="grid">
+        <div class="card ia-card" style="background-color: {{ cor_card }}; border-color: {{ cor_texto }}; color: {{ cor_texto }}">
+            <h3>🤖 IA: Chance de Chuva</h3>
+            <div class="porcentagem">{{ "%.1f"|format(prob_chuva) }}%</div>
+            <div style="font-weight: bold; font-size: 1.2em;">{{ msg_previsao }}</div>
+            <br>
+            <small>
+                <strong>Médias Usadas (60min):</strong><br>
+                Temp: {{ "%.1f"|format(inputs_usados[0]) }}°C | 
+                Umid: {{ "%.1f"|format(inputs_usados[1]) }}% <br> 
+                Press: {{ "%.1f"|format(inputs_usados[2]) }} hPa |
+                Vento: {{ "%.1f"|format(inputs_usados[3]) }} m/s
+            </small>
+        </div>
 
-            <div class="card full-width">
-                <h3>📊 Tempo Real (Última Hora)</h3>
-                <canvas id="grafico" height="80"></canvas>
+        <div class="card" style="background: #e3f2fd; border-left: 5px solid #2196F3;">
+            <h3>🌬️ Vento em {{ cidade }}</h3>
+            <p>Média dos últimos 60min:</p>
+            <div style="font-size: 3em; font-weight: bold; color: #1565C0;">
+                {{ "%.1f"|format(inputs_usados[3]) }} m/s
             </div>
+            <small>Fonte: OpenWeatherMap (Integrado)</small>
         </div>
 
         <div class="card full-width">
-            <h3>📑 Histórico de Médias (Arquivadas)</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Período</th>
-                        <th>Temp</th>
-                        <th>Pressão</th>
-                        <th>Umid</th>
-                        <th>Vento Média</th> <th>Amostras</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for r in resumos %}
-                    <tr>
-                        <td>{{ r[1].split('T')[1][:5] }} - {{ r[2].split('T')[1][:5] }}</td>
-                        <td>{{ "%.1f"|format(r[3]) }} °C</td>
-                        <td>{{ "%.1f"|format(r[4]) }} hPa</td>
-                        <td>{{ "%.1f"|format(r[6]) }} %</td>
-                        
-                        <td><strong>{{ "%.1f"|format(r[7]) }} m/s</strong></td>
-                        
-                        <td>{{ r[8] }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <h3>📊 Tempo Real (Última Hora)</h3>
+            <canvas id="grafico" height="80"></canvas>
         </div>
+    </div>
 
-        <script>
-            let ctx = document.getElementById('grafico').getContext('2d');
-            let chart = new Chart(ctx, {
-                type: 'line',
-                data: { labels: [], datasets: [ 
-                    { label: 'Temp', data: [], borderColor: 'red', yAxisID: 'y' }, 
-                    { label: 'Umid', data: [], borderColor: 'blue', yAxisID: 'y' },
-                    { label: 'Vento', data: [], borderColor: 'orange', yAxisID: 'y' } 
-                ]},
-                options: { animation: false }
-            });
+    <div class="card full-width">
+        <h3>📑 Histórico de Médias (Arquivadas)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Período</th>
+                    <th>Temp</th>
+                    <th>Pressão</th>
+                    <th>Umid</th>
+                    <th>Vento Média</th> <th>Amostras</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in resumos %}
+                <tr>
+                    <td>{{ r[1].split('T')[1][:5] }} - {{ r[2].split('T')[1][:5] }}</td>
+                    <td>{{ "%.1f"|format(r[3]) }} °C</td>
+                    <td>{{ "%.1f"|format(r[4]) }} hPa</td>
+                    <td>{{ "%.1f"|format(r[6]) }} %</td>
+                    
+                    <td><strong>{{ "%.1f"|format(r[7]) }} m/s</strong></td>
+                    
+                    <td>{{ r[8] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-            function atualizarGrafico() {
-                fetch("/api/brutos").then(res => res.json()).then(dados => {
-                    let labels = [], temp = [], umid = [], vento = [];
-                    dados.reverse().forEach(d => {
-                        labels.push(d[6].split('T')[1].split('.')[0]); // Data é indice 6 agora
-                        temp.push(d[1]); 
-                        umid.push(d[4]); 
-                        vento.push(d[5]); // Vento é indice 5
-                    });
-                    chart.data.labels = labels; 
-                    chart.data.datasets[0].data = temp; 
-                    chart.data.datasets[1].data = umid; 
-                    chart.data.datasets[2].data = vento;
-                    chart.update();
+    <script>
+        let ctx = document.getElementById('grafico').getContext('2d');
+        let chart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: [], datasets: [ 
+                { label: 'Temp', data: [], borderColor: 'red', yAxisID: 'y' }, 
+                { label: 'Umid', data: [], borderColor: 'blue', yAxisID: 'y' },
+                { label: 'Vento', data: [], borderColor: 'orange', yAxisID: 'y' } 
+            ]},
+            options: { animation: false }
+        });
+
+        function atualizarGrafico() {
+            fetch("/api/brutos").then(res => res.json()).then(dados => {
+                let labels = [], temp = [], umid = [], vento = [];
+                dados.reverse().forEach(d => {
+                    labels.push(d[6].split('T')[1].split('.')[0]); // Data é indice 6 agora
+                    temp.push(d[1]); 
+                    umid.push(d[4]); 
+                    vento.push(d[5]); // Vento é indice 5
                 });
-            }
-            setInterval(atualizarGrafico, 3000);
-            atualizarGrafico();
-        </script>
-    </body>
-    </html>
-    """
+                chart.data.labels = labels; 
+                chart.data.datasets[0].data = temp; 
+                chart.data.datasets[1].data = umid; 
+                chart.data.datasets[2].data = vento;
+                chart.update();
+            });
+        }
+        setInterval(atualizarGrafico, 3000);
+        atualizarGrafico();
+    </script>
+</body>
+</html>
+"""

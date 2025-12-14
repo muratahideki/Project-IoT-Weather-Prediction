@@ -1,11 +1,13 @@
 # tasks.py
 from datetime import datetime, timedelta
+from apscheduler.schedulers.background import BackgroundScheduler
 import sqlite3
 import requests
 import math
+import atexit
 
 # --- CONFIGURAÇÃO DA API EXTERNA (VENTO) ---
-API_KEY = "SUA_CHAVE_AQUI"  # <--- COLOQUE SUA CHAVE AQUI
+API_KEY = "2dca8a2bed77e01a0b189944dd3fda0f"  # <--- COLOQUE SUA CHAVE AQUI
 LAT = "-22.73"  
 LON = "-45.12"
 URL_API = f"https://api.openweathermap.org/data/2.5/weather?lat={LAT}&lon={LON}&appid={API_KEY}&units=metric"
