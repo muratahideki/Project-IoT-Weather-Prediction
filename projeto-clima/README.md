@@ -160,6 +160,7 @@ def obter_media_movel(minutos: int = 60):
 ```
 - O AVG faz as médias
 - Invés de usar o fetchall(), que é para várias linhas, usa o fetchone() para uma linha
+- `inicio = datetime.now() - timedelta(minutes=minutos):` estamos pegando o tempo atual do `datetime.now()` e voltando 1h, e assim falamos que o inicio foi 1h atrás. Isso é feito o tempo todo por isso que a média é móvel.
 
 | Aspecto      | Medidas brutas       | Média móvel               |
 | ------------ | -------------------- | ------------------------- |
