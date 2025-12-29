@@ -79,3 +79,94 @@ def salvar_medida(
     conn.commit()
     conn.close()
 ```
+
+Na função `salvar_medida()`:
+- `conn = sqlite3.connect(DB_NAME):` conexão com sqlite3
+- `cursor = conn.cursor():` cursor é um objeto é por meio dele vai ocorrer a comunicação e modificação do banco de dados
+- `cursor.execute(sql,parametros fornecidos pelo python):` aqui que ocorre o tipo de modificação desejada, além de fazer a comunicação entre sql e python. No sql temos:
+
+```sql
+INSERT INTO medidas
+    (temperatura, pressao, altitude, umidade, vento, data_hora)
+VALUES
+    (?, ?, ?, ?, ?, ?)
+```
+Parte 1 — INSERT INTO medidas<br>
+
+- INSERT INTO → comando de inserção
+- medidas → nome da tabela
+
+O SQLite: localiza a tabela medidas, verifica se ela existe, carrega o esquema dela
+
+Parte 2 — Lista de colunas
+
+- `(temperatura, pressao, altitude, umidade, vento, data_hora):` são as colunas que serão preenchidas 
+
+Parte 3 - Placeholders 
+
+- `values` vai indicar que o que vem depois são as valores que vão preencher as colunas, no caso, `(?, ?, ?, ?, ?, ?)` que na verdade são Placeholders.
+
+Para encerrar, `conn.commit()` serve para salvar os dados na tabela; `conn.close()` serve para encerrar a tabela 
+
+Para a seguinte parte do código:
+
+```python
+def obter_medidas_brutas(limit: int = 60):
+
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT * FROM medidas
+        ORDER BY id DESC
+        LIMIT ?
+    """, (limit,))
+
+    dados = cursor.fetchall()
+    conn.close()
+
+    return dados
+```
+
+Vai recuperar os últimos 60 dados, vamos entender a parte do sql:
+- `SELECT * FROM medidas:` Seleciona todas as colunas de todas as linhas da tabela medidas
+- `ORDER BY id DESC:` Ordena pelo id e na ordem decrescente, isto é, dos mais novos para os mais antigos
+- `dados = cursor.fetchall(): ` lê do banco todos os resultados da última consulta SQL executada pelo cursor, e guarda isso em memória dentro da variável dados. O select é como uma seleção pelo curso, mas só com fetchall é que busca e salva na variável.
+
+```
+def obter_media_movel(minutos: int = 60):
+    """
+    Calcula a média das medidas dos últimos X minutos.
+    """
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    inicio = datetime.now() - timedelta(minutes=minutos)
+
+    cursor.execute("""
+        SELECT
+            AVG(temperatura),
+            AVG(umidade),
+            AVG(pressao),
+            AVG(vento)
+        FROM medidas
+        WHERE data_hora >= ?
+    """, (inicio.isoformat(),))
+
+    media = cursor.fetchone()
+    conn.close()
+
+    return media
+```
+- O AVG faz as médias
+- Invés de usar o fetchall(), que é para várias linhas, usa o fetchone() para uma linha
+
+| Aspecto      | Medidas brutas       | Média móvel               |
+| ------------ | -------------------- | ------------------------- |
+| Tipo de dado | Linhas reais         | Valores agregados         |
+| Critério     | Quantidade (`LIMIT`) | Tempo (`WHERE data_hora`) |
+| Funções SQL  | Nenhuma              | `AVG()`                   |
+| Fetch        | `fetchall()`         | `fetchone()`              |
+| Retorno      | Lista de tuplas      | Uma única tupla           |
+| Semântica    | Histórico            | Estatística               |
+
