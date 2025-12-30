@@ -32,7 +32,15 @@ A configuração do banco de dados é feita por meio de `SQLALCHEMY_DATABASE_URI
 
 Por fim, o atributo `WEATHER_API_KEY` armazena a chave de acesso para APIs externas, como a API de clima. Essa chave é lida exclusivamente a partir de variáveis de ambiente, evitando que informações sensíveis fiquem hardcoded no código-fonte.
 
+Para salvar sua chave API:
 
+```powershell
+setx WEATHER_API_KEY "sua_chave_aqui"
+```
+
+```bash
+export WEATHER_API_KEY="sua_chave_aqui"
+```
 
 
 
