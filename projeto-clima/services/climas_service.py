@@ -1,3 +1,6 @@
+import math
+
+
 def calcular_probabilidade_chuva(temp, umid, pressao, vento):
     # --- NOVOS PESOS (Atualizado) ---
     w_temp = -0.06074339
