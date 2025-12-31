@@ -1,34 +1,37 @@
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 
 DB_NAME = "estacao.db"
+
 
 def salvar_resumo(
     temperatura: float,
     umidade: float,
     pressao: float,
     vento: float,
-    data_hora: str | None = None
 ) -> None:
     """
     Salva um resumo (ex: média horária) no banco.
     """
-    if data_hora is None:
-        data_hora = datetime.now().isoformat()
+
+    agora = datetime.now()
+    data_fim = agora.replace(minute=0, second=0, microsecond=0)
+    data_inicio = data_fim - timedelta(hours=1)
 
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
     cursor.execute("""
-        INSERT INTO resumos
-        (temperatura, umidade, pressao, vento, data_hora)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO resumos (inicio,fim, temp_media, pressao_media, umidade_media, vento_medio, data_geracao)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     """, (
+        data_inicio.isoformat(),
+        data_fim.isoformat(),
         temperatura,
+        pressao, 
         umidade,
-        pressao,
         vento,
-        data_hora
+        agora
     ))
 
     conn.commit()

@@ -27,10 +27,9 @@ def inicializar_db():
             fim TEXT,
             temp_media REAL,
             pressao_media REAL,
-            altitude_media REAL,
             umidade_media REAL,
             vento_medio REAL,
-            amostras INTEGER
+            data_geracao TEXT
         )
     """)
 

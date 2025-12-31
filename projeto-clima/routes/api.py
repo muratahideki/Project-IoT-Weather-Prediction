@@ -24,7 +24,7 @@ def receber_dados():
     if not dados:
         return jsonify({"erro": "JSON inválido"}), 400
 
-    salvar_medida(temp, press, alt, umid, vento_atual)
+    salvar_medida(temp, press, alt, umid, vento_atual) # essa função está salvando a medida na tabela medidas 
     return jsonify({"status": "ok"})
 
 

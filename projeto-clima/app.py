@@ -1,11 +1,12 @@
 from flask import Flask
 from apscheduler.schedulers.background import BackgroundScheduler
+import atexit
 
 import database
-import tasks
+from services import calcular_media_hora_anterior
 
 from routes.api import api_bp
-from routes.dashboard import dashboard_bp
+
 
 app = Flask(__name__)
 
@@ -14,8 +15,9 @@ database.inicializar_db()
 
 # Scheduler
 scheduler = BackgroundScheduler()
-scheduler.add_job(tasks.calcular_media_hora_anterior, trigger="cron", minute=0)
+scheduler.add_job(func=calcular_media_hora_anterior, trigger="cron", minute=0)
 scheduler.start()
+atexit.register(lambda: scheduler.shutdown())
 
 # Blueprints
 app.register_blueprint(api_bp)
