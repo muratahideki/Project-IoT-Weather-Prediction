@@ -178,7 +178,7 @@ Um card especial para IA: Conteúdo centralizado, Borda visível (pode mudar cor
 }
 ```
 
-### BODY
+### BODY 
 
 ```html
 <div class="grid">
@@ -198,35 +198,9 @@ Um card especial para IA: Conteúdo centralizado, Borda visível (pode mudar cor
 ```
 
 Vamos analisar uma parte do body<br>
-`<div class="porcentagem">{{ "%.1f"|format(prob_chuva) }}%</div>`: o que está dentro das chaves mostra que é um float, e vai ser usado até a primeira casa decimal de prob_chuva. Mas de onde vem prob_chuva e as outras váriáveis? A seguir mostra uma parte do código da routes, em um arquivo chamado dashboard.py 
+`<div class="porcentagem">{{ "%.1f"|format(prob_chuva) }}%</div>`: o que está dentro das chaves mostra que é um float, e vai ser usado até a primeira casa decimal de prob_chuva. Mas de onde vem prob_chuva e as outras váriáveis? A seguir mostra uma parte do código da routes, em um arquivo chamado api.py. Nesse parte do código ele chama a função de média móvel dos últimos 60 minutos e chama uma outra função para calcular a probabilidade de chuva.
 
 ```python 
-@dashboard_bp.route("/")
-def dashboard():
-
-    media = obter_media_movel(60)
-
-    prob_chuva = 0.0
-    msg_previsao = "Aguardando dados..."
-    cor_card = "#eeeeee"
-    cor_texto = "#333333"
-    inputs_usados = [0, 0, 0, 0]
-
-    if media and media[0] is not None:
-        t, u, p, v = media
-        inputs_usados = [t, u, p, v]
-
-        prob_chuva = calcular_probabilidade_chuva(t, u, p, v)
-
-        if prob_chuva > 50:
-            cor_card = "#ffcccc"
-            cor_texto = "#a00000"
-            msg_previsao = "ALTA probabilidade de chuva"
-        else:
-            cor_card = "#ccffcc"
-            cor_texto = "#006600"
-            msg_previsao = "Baixa probabilidade de chuva"
-
     return render_template(
         "dashboard.html",
         prob_chuva=prob_chuva,
@@ -239,3 +213,87 @@ def dashboard():
 
 A parte central aqui é o que retorna, uma função nativa do flask que faz a comunicação com html, chama-se render_template(). Essa função vai procurar o arquivo "dashboard.html" na pasta template e vai mandar todas as variáveis presentes como argumentos dessa função. 
 
+### Gráfico 
+
+Em seguida temos um card para velocidade de vento, mas não tem nenhuma novidade no código. Passamos então para o código do gráfico a seguir:
+
+```html
+        <div class="card full-width">
+            <h3> Tempo Real (Última Hora)</h3>
+            <canvas id="grafico" height="80"></canvas>
+        </div>
+```
+
+O que importa é esse id="gráfico, por causa do javascript que de fato monta o gráfico:
+
+```js
+let ctx = document.getElementById('grafico').getContext('2d');
+let chart = new Chart(ctx, {
+    type: 'line',
+    data: { labels: [], datasets: [ 
+        { label: 'Temp', data: [], borderColor: 'red', yAxisID: 'y' }, 
+        { label: 'Umid', data: [], borderColor: 'blue', yAxisID: 'y' },
+        { label: 'Vento', data: [], borderColor: 'orange', yAxisID: 'y' } 
+    ]},
+    options: { animation: false }
+});
+```
+
+- getElementById procura no html onde está o id "gráfico
+- getContext se relaciona com chart.js para criar os desenhos 2D
+- Em `new Chart(ctx, ` o primeiro parâmetro ctx indica onde vai ser desenhado, enquanto o segundo indica as configurações
+- `type: 'line '` indica que o gráfico vai ser de linha.
+- `labels: []` é o eixo x que está vázio porque vai ser preenchido dinamicamente com o horário.
+- temos 3 variáveis para oo gráfico, cada um representado pela mesma cor, tendo o mesmo eixo y de referência e também valores de data vázios pois vão ser adicionados dinamicamente.
+
+Em seguida temos uma função que vai buscar os dados para preencher o gráfico
+```js
+function atualizarGrafico() {
+    fetch("/api/brutos").then(res => res.json()).then(dados => {
+        let labels = [], temp = [], umid = [], vento = [];
+        dados.reverse().forEach(d => {
+            labels.push(d[6].split('T')[1].split('.')[0]); // Data é indice 6 agora
+            temp.push(d[1]); 
+            umid.push(d[4]); 
+            vento.push(d[5]); // Vento é indice 5
+        });
+        chart.data.labels = labels; 
+        chart.data.datasets[0].data = temp; 
+        chart.data.datasets[1].data = umid; 
+        chart.data.datasets[2].data = vento;
+        chart.update();
+    });
+}
+
+setInterval(atualizarGrafico, 3000);
+atualizarGrafico();
+```
+
+- A busca ocorre em uma rota onde pega os valores da tabela medidas, e seleciona as últimas 60 ( o gráfico vai ter esse intervalo de 60 medidas portanto)
+- fetch() faz uma requisição HTTP (GET por padrão). "/api/brutos" é o endpoint do seu backend (ex: Flask). É esperado um json
+- A resposta que é recebida chama-se response. Por isso em `then()` a res é transformada em um objeto javascript
+- Em seguida eu crio uma variável dados que vai receber os json, se tornando um array de array de medidas , algo como:
+
+```
+dados = [
+  [
+    0,          // índice 0 → algum id
+    25.3,       // índice 1 → temperatura
+    ...,        // índice 2
+    ...,        // índice 3
+    62,         // índice 4 → umidade
+    4.8,        // índice 5 → vento
+    "2025-01-02T14:30:10.123" // índice 6 → data/hora
+  ],
+  ...
+]
+```
+
+- Logo em seguida são criado arrays de interesse, que vão representar as variáveis do gráfico.
+- `dados.reverse().forEach(d => {` desse objeto dados vou pegar o mais recente com o uso de reverse(). Para cada array que vai ser chamado de d:
+- d[6] → campo de data/hora (ISO, ex: 2025-01-02T14:23:10.123)
+- .split('T')[1] → pega só a hora (14:23:10.123)
+- .split('.')[0] → remove os milissegundos
+- é usado o push para adicionar ao array
+- chart é basicamente o gráfico, o .data é o atributo de valor
+- chart.update vai atualizar o gráfico
