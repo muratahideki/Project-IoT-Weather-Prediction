@@ -31,7 +31,7 @@ def salvar_resumo(
         pressao, 
         umidade,
         vento,
-        agora
+        agora.isoformat()
     ))
 
     conn.commit()

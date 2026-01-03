@@ -1,9 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify
-from repository.medidas_repo import salvar_medida, obter_medidas_brutas
+from repository.medidas_repo import salvar_medida, obter_medidas_brutas, obter_media_movel
 from services.vento_service import obter_vento_externo
 
-
-from repository.medidas_repo import obter_media_movel
 from services.climas_service import calcular_probabilidade_chuva
 
 api_bp = Blueprint("api", __name__)
@@ -54,6 +52,7 @@ def dashboard():
             cor_card = "#ffcccc"
             cor_texto = "#a00000"
             msg_previsao = "ALTA probabilidade de chuva"
+
         else:
             cor_card = "#ccffcc"
             cor_texto = "#006600"
