@@ -60,7 +60,8 @@ def obter_media_movel(minutos: int = 60):
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
-    inicio = datetime.now() - timedelta(minutes=minutos)
+    fim = datetime.now()
+    inicio = fim - timedelta(minutes=minutos)
 
     cursor.execute("""
         SELECT
@@ -71,7 +72,7 @@ def obter_media_movel(minutos: int = 60):
             COUNT(*)
         FROM medidas
         WHERE data_hora >= ? AND data_hora <= ?
-    """, (inicio.isoformat(), datetime().isoformat()))
+    """, (inicio.isoformat(), fim.isoformat()))
 
     media = cursor.fetchone()
     conn.close()
