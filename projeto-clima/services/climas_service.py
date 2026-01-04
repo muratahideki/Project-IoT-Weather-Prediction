@@ -1,5 +1,4 @@
 import math
-from repository import obter_media_movel
 
 def calcular_probabilidade_chuva(temp, umid, pressao, vento):
     # --- NOVOS PESOS (Atualizado) ---

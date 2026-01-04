@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify
-from repository.medidas_repo import salvar_medida, obter_medidas_brutas, obter_media_movel
+from repository import salvar_medida, obter_medidas_brutas, obter_media_movel, obter_resumos
 from services.vento_service import obter_vento_externo
 
 from services.climas_service import calcular_probabilidade_chuva
@@ -35,6 +35,7 @@ def api_brutos():
 def dashboard():
 
     media = obter_media_movel(60)
+    resumos = obter_resumos()
 
     prob_chuva = 0.0
     msg_previsao = "Aguardando dados..."
@@ -60,6 +61,7 @@ def dashboard():
 
     return render_template(
         "dashboard.html",
+        resumos = resumos
         prob_chuva=prob_chuva,
         msg_previsao=msg_previsao,
         cor_card=cor_card,
