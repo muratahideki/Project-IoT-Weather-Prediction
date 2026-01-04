@@ -46,7 +46,7 @@ O projeto segue uma arquitetura cliente-servidor:
     ```
 
 3.  Configuração:
-    Abra o arquivo `app.py` (ou `config.py` se refatorado) e insira sua chave da API:
+    Abra o arquivo `config.py` e insira sua chave da API:
     ```python
     API_KEY = "SUA_CHAVE_AQUI"
     LAT = "-22.73"  # Sua Latitude
@@ -73,3 +73,11 @@ O ESP32 deve enviar uma requisição **HTTP POST** para o endpoint `/dados` com 
   "pressao": 1013.2,
   "altitude": 520.0
 }
+```
+## rodar com docker 
+
+```bash 
+docker compose down
+docker compose build --no-cache
+docker compose up
+```
