@@ -59,14 +59,6 @@ docker compose restart clima
 - Isso permite a persistência de dados, uma vez que pode apagar o contêiner, mas mantendo os dados
 - Essa linha é especialmente importante, porque isso mostra que está sendo salvo fora do contêiner, na própria máquina. Isso cria a persistência. 
 
-Para fazer funcionar:
-
-```bash 
-docker compose down
-docker compose build --no-cache
-docker compose up
-```
-
 ### .dockerignore
 
 evita:
