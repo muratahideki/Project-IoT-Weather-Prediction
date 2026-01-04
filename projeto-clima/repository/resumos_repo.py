@@ -1,16 +1,15 @@
 import sqlite3
 from datetime import datetime, timedelta
-
-DB_NAME = r"C:\Users\murat\OneDrive\Área de trabalho\Documentos\IOT-update\Project-IoT-Weather-Prediction\projeto-clima\data\estacao.db"
-
-
+from database import DB_NAME
 
 def salvar_resumo(
     temperatura: float,
     umidade: float,
     pressao: float,
     vento: float,
+    counts: int
 ) -> None:
+    
     """
     Salva um resumo (ex: média horária) no banco.
     """
@@ -23,8 +22,8 @@ def salvar_resumo(
     cursor = conn.cursor()
 
     cursor.execute("""
-        INSERT INTO resumos (inicio,fim, temp_media, pressao_media, umidade_media, vento_medio, data_geracao)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO resumos (inicio, fim, temp_media, pressao_media, umidade_media, vento_medio, qnt_amostras , data_geracao)
+        VALUES (?, ?, ?, ?, ?, ?, ?. ?)
     """, (
         data_inicio.isoformat(),
         data_fim.isoformat(),
@@ -32,6 +31,7 @@ def salvar_resumo(
         pressao, 
         umidade,
         vento,
+        counts,
         agora.isoformat()
     ))
 
@@ -69,7 +69,7 @@ def obter_ultimo_resumo():
     cursor.execute("""
         SELECT *
         FROM resumos
-        ORDER BY data_hora DESC
+        ORDER BY fim DESC
         LIMIT 1
     """)
 

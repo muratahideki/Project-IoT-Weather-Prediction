@@ -104,7 +104,8 @@ def calcular_media_hora_anterior():
 
     if resultado and resultado[5] > 0: # resultado[5] é o Count
         cursor.execute("""
-            INSERT INTO resumos (inicio_periodo, fim_periodo, media_temp, media_pressao, media_altitude, media_umidade, media_vento, qtd_amostras, data_geracao)
+            INSERT INTO resumos (inicio_periodo, fim_periodo, media_temp, media_pressao, media_altitude, media_umidade, media_vento, 
+                       qtd_amostras, data_geracao)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (data_inicio.isoformat(), data_fim.isoformat(), 
               resultado[0], resultado[1], resultado[2], resultado[3], resultado[4], 

@@ -3,9 +3,9 @@ import sqlite3
 import os 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
-DB_NAME = os.path.join(DATA_DIR, "estacao.db")
+DB_NAME = os.path.join(BASE_DIR, "data", "estacao.db")
 
+# print("DB PATH:", DB_NAME)
 
 
 def inicializar_db():
@@ -35,6 +35,7 @@ def inicializar_db():
             pressao_media REAL,
             umidade_media REAL,
             vento_medio REAL,
+            qnt_amostras INTEGER,
             data_geracao TEXT
         )
     """)

@@ -1,8 +1,7 @@
 import sqlite3
 from datetime import datetime, timedelta
-import os 
+from database import DB_NAME
 
-DB_NAME = r"C:\Users\murat\OneDrive\Área de trabalho\Documentos\IOT-update\Project-IoT-Weather-Prediction\projeto-clima\data\estacao.db"
 
 
 def salvar_medida(
@@ -68,10 +67,11 @@ def obter_media_movel(minutos: int = 60):
             AVG(temperatura),
             AVG(umidade),
             AVG(pressao),
-            AVG(vento)
+            AVG(vento),
+            COUNT(*)
         FROM medidas
-        WHERE data_hora >= ?
-    """, (inicio.isoformat(),))
+        WHERE data_hora >= ? AND data_hora <= ?
+    """, (inicio.isoformat(), datetime().isoformat()))
 
     media = cursor.fetchone()
     conn.close()

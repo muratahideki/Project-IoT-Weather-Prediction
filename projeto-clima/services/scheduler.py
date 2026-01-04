@@ -12,6 +12,6 @@ def calcular_media_hora_anterior():
     salva na tabela resumos
     """
 
-    media_temp, media_umidade, media_pressao, media_vento = obter_media_movel()
-    salvar_resumo(media_temp, media_umidade, media_pressao, media_vento)
+    media_temp, media_umidade, media_pressao, media_vento, counts = obter_media_movel()
+    salvar_resumo(media_temp, media_umidade, media_pressao, media_vento, counts )
 
