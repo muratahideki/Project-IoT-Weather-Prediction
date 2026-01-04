@@ -16,6 +16,73 @@ projeto-clima/<br>
 └── data/<br>
     └── clima.db<br>
 
+
+### dockerfile 
+
+1) Começamos com o `WORKDIR` que basicamente é entrar em um diretório, assim estamos entrando no diretório app.
+2) Em seguida fazemos uma `COPY` de requirements.txt e executamos para baixar as libs
+3) Fazemos um segundo COPY de todas as pastas e arquivos do códigos com `COPY . .` o primeiro ponto se refere a baixar todos arquivos da pasta e o segundo ponto se refere ao destino da copia em app. (diretório do docker)
+- Note que temos assim uma primeira camada de libs e uma segunda dos códigos 
+
+Para fazer funcionar é necessário usar os comados docker build e docker run 
+
+### docker compose 
+
+Se tiver vários conteiners é necessário fazer vários docker run, ou usar um arquivo que automatiza esse processo com docker compose 
+
+1) Começa com services, onde vai ser definido comos os contêineres vão ser usados. Porém só estou usando um serviço que foi nomeado como clima.
+- O nome do serviço é qualquer um, mas é indicado um nome da sua função. Esse nome é usado para refernciar quando estiver usando o docker-compose
+
+```bash
+docker compose logs clima
+docker compose restart clima
+```
+
+2) Construir o dockerfile
+```bash
+    build: .
+```
+- Vai procurar o dockerfile nessa pasta e buildar
+- equivalente à docker build .
+
+3) conteiner_name: clima_app
+- opcional
+- define o nome do contêiner
+
+4) ports:
+- 5000:5000
+- porta 5000 da máquina e porta 5000 do docker 
+
+5) volumes:
+- ./data: app/data
+- isso cria um atalho da pasta do pc ./data e a pasta do contêiner app/data
+- Isso permite a persistência de dados, uma vez que pode apagar o contêiner, mas mantendo os dados
+- Essa linha é especialmente importante, porque isso mostra que está sendo salvo fora do contêiner, na própria máquina. Isso cria a persistência. 
+
+Para fazer funcionar:
+
+```bash 
+docker compose down
+docker compose build --no-cache
+docker compose up
+```
+
+### .dockerignore
+
+evita:
+- copiar cache
+- copiar configs do VSCode
+- copiar arquivos inúteis
+
+```
+__pycache__/ 
+*.pyc
+.env
+.git
+.gitignore
+.vscode
+```
+
 ### app
 
 Este arquivo é o **ponto de entrada principal da aplicação Flask**, responsável por inicializar o servidor web, preparar o banco de dados, configurar tarefas agendadas e registrar as rotas da API.
@@ -66,66 +133,5 @@ export WEATHER_API_KEY="sua_chave_aqui"
 
 Cria a tabela de resumos e de medidas 
 
-### dockerfile 
 
-1) Começamos com o `WORKDIR` que basicamente é entrar em um diretório, assim estamos entrando no diretório app.
-2) Em seguida fazemos uma `COPY` de requirements.txt e executamos para baixar as libs
-3) Fazemos um segundo COPY de todas as pastas e arquivos do códigos com `COPY . .` o primeiro ponto se refere a baixar todos arquivos da pasta e o segundo ponto se refere ao destino da copia em app. (diretório do docker)
-- Note que temos assim uma primeira camada de libs e uma segunda dos códigos 
-
-Para fazer funcionar é necessário usar os comados docker build e docker run 
-
-### docker compose 
-
-Se tiver vários conteiners é necessário fazer vários docker run, ou usar um arquivo que automatiza esse processo com docker compose 
-
-1) Começa com services, onde vai ser definido comos os contêineres vão ser usados. Porém só estou usando um serviço que foi nomeado como clima.
-- O nome do serviço é qualquer um, mas é indicado um nome da sua função. Esse nome é usado para refernciar quando estiver usando o docker-compose
-
-```bash
-docker compose logs clima
-docker compose restart clima
-```
-
-2) Construir o dockerfile
-```bash
-    build: .
-```
-- Vai procurar o dockerfile nessa pasta e buildar
-- equivalente à docker build .
-
-3) conteiner_name: clima_app
-- opcional
-- define o nome do contêiner
-
-4) ports:
-- 5000:5000
-- porta 5000 da máquina e porta 5000 do docker 
-
-5) volumes:
-- ./data: app/data
-- isso cria um atalho da pasta do pc ./data e a pasta do contêiner app/data
-- Isso permite a persistência de dados, uma vez que pode apagar o contêiner, mas mantendo os dados
-- Essa linha é especialmente importante, porque isso mostra que está sendo salvo fora do contêiner, na própria máquina. Isso cria a persistência. 
-
-Para fazer funcionar:
-
-```bash 
-docker compose up --build
-```
-
-### .dockerignore
-
-evita:
-- copiar cache
-- copiar configs do VSCode
-- copiar arquivos inúteis
-
-```
-__pycache__/ 
-*.pyc
-.env
-.git
-.gitignore
-.vscode```
 
