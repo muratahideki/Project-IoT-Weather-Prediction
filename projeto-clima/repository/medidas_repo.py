@@ -1,7 +1,9 @@
 import sqlite3
 from datetime import datetime, timedelta
+import os 
 
-DB_NAME = "estacao.db"
+DB_NAME = r"C:\Users\murat\OneDrive\Área de trabalho\Documentos\IOT-update\Project-IoT-Weather-Prediction\projeto-clima\data\estacao.db"
+
 
 def salvar_medida(
     temperatura: float,

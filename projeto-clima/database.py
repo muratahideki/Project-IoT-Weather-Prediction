@@ -1,6 +1,12 @@
 # database.py
 import sqlite3
-DB_NAME = "estacao.db"
+import os 
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+DB_NAME = os.path.join(DATA_DIR, "estacao.db")
+
+
 
 def inicializar_db():
     conn = sqlite3.connect(DB_NAME)

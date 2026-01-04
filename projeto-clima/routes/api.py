@@ -61,7 +61,7 @@ def dashboard():
 
     return render_template(
         "dashboard.html",
-        resumos = resumos
+        resumos = resumos,
         prob_chuva=prob_chuva,
         msg_previsao=msg_previsao,
         cor_card=cor_card,

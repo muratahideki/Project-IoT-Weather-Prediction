@@ -8,7 +8,8 @@ DB_NAME = "database.db"
 
 def calcular_media_hora_anterior():
     """
-    Calcula médias da última hora e salva na tabela resumos
+    Calcula médias da última hora da tabela medidas, usando o scheduler em horários exatos 
+    salva na tabela resumos
     """
 
     media_temp, media_umidade, media_pressao, media_vento = obter_media_movel()

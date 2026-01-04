@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  clima:
+    build: .
+    container_name: clima-app
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - DB_NAME=data/clima.db
+    restart: unless-stopped
